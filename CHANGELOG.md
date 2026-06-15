@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.1
+
+- fix cleanup leaking a TXT record for combined apex + wildcard certs
+  (e.g. `example.com` + `*.example.com`); track cleanup records by
+  `(validation_name, validation)` instead of `validation_name` alone
+  (frederick-wang, #9)
+
 ## 2.1.0
 
 - fix the utc time bug (frederick-wang)
