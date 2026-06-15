@@ -128,7 +128,7 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         sub_domain = validation_name[: -(len(base_domain) + 1)]
         r = client.create_record(base_domain, sub_domain, "TXT", validation)
-        self.cleanup_maps[validation_name] = (base_domain, r["RecordId"])
+        self.cleanup_maps[(validation_name, validation)] = (base_domain, r["RecordId"])
 
     def _cleanup(self, domain, validation_name, validation):
         if self.conf("debug"):
@@ -138,8 +138,9 @@ class Authenticator(dns_common.DNSAuthenticator):
             self.secret_key,
             self.conf("debug"),
         )
-        if validation_name in self.cleanup_maps:
-            base_domain, record_id = self.cleanup_maps[validation_name]
+        cleanup_key = (validation_name, validation)
+        if cleanup_key in self.cleanup_maps:
+            base_domain, record_id = self.cleanup_maps.pop(cleanup_key)
             client.delete_record(base_domain, record_id)
         else:
             print("record id not found during cleanup, cleanup probably failed")
